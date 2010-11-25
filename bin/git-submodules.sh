@@ -82,6 +82,9 @@ git_uninitialize_module () { # $MOD_PATH
     rm -rf "$GIT_TOPLEVEL/$1"
     git config --remove-section submodule."$1" 2> /dev/null
 }
+
+git_sync_module () { # $MOD_PATH
+    git submodule sync -- "$1"
 }
 
 do_submodule () { # $NAME $PATH $URL
@@ -97,6 +100,8 @@ do_submodule () { # $NAME $PATH $URL
         if ask_yesno "Change to symlink? [y]es/[N]O: " "n"; then
             git_uninitialize_module "$MOD_PATH"
             DO_INITIALIZE=1
+        else
+            git_sync_module "$MOD_PATH"
         fi
     elif [[ -h "$MOD_PATH" ]]; then
         echo -n "symlinked to "
