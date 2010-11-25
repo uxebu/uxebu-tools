@@ -78,9 +78,10 @@ git_initialize_module () { # $MOD_PATH
     git submodule init -- "$1"
 }
 
-git_uninitialize_module () { # $MOD_NAME $MOD_PATH
-    rm -rf "$GIT_TOPLEVEL/$2"
-    git config --remove-section  submodule."$1" 2> /dev/null
+git_uninitialize_module () { # $MOD_PATH
+    rm -rf "$GIT_TOPLEVEL/$1"
+    git config --remove-section submodule."$1" 2> /dev/null
+}
 }
 
 do_submodule () { # $NAME $PATH $URL
@@ -94,7 +95,7 @@ do_submodule () { # $NAME $PATH $URL
     if [ $INITIALIZED_URL ]; then
         echo -e "initialized with URL ${COLOR_BLUE}$INITIALIZED_URL${COLOR_END}"
         if ask_yesno "Change to symlink? [y]es/[N]O: " "n"; then
-            git_uninitialize_module "$MOD_NAME" "$MOD_PATH"
+            git_uninitialize_module "$MOD_PATH"
             DO_INITIALIZE=1
         fi
     elif [[ -h "$MOD_PATH" ]]; then
