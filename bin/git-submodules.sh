@@ -53,6 +53,11 @@ abs_path () { # $FILE_PATH
 create_symlink () { # $LINK_SOURCE $LINK_TARGET (both absolute or relative to $PWD)
     local LINK_SOURCE="$1" LINK_TARGET="$2"
     local TARGET_DIR=$(dirname "$LINK_TARGET")
+
+    if [[ -e "$LINK_TARGET" ]]; then
+        rm -rf "$LINK_TARGET"
+    fi
+
     if [[ ! -d "$TARGET_DIR" ]]; then
         mkdir -p "$TARGET_DIR"
     fi
