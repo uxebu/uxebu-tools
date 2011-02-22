@@ -1,0 +1,19 @@
+{
+  "keyboard_shortcut": "Ctrl+Alt+Shift+U", 
+  "name": "From_Unicode_Literals", 
+  "language": "JavaScript", 
+  "trigger_enabled": false, 
+  "value": [
+    "var scimoz =  ko.views.manager.currentView.scimoz;", 
+    "var textOut = scimoz.selText.replace(/\\\\u([0-9a-f]{4})/g, function(_, code){", 
+    "    return String.fromCharCode(parseInt(code, 16));", 
+    "});", 
+    "", 
+    "scimoz.replaceSel(textOut);"
+  ], 
+  "trigger": "trigger_postopen", 
+  "rank": 100, 
+  "version": "1.0.7", 
+  "async": false, 
+  "type": "macro"
+}

@@ -1,0 +1,23 @@
+{
+  "keyboard_shortcut": "Ctrl+Alt+U", 
+  "name": "To Unicode Literals", 
+  "language": "JavaScript", 
+  "trigger_enabled": false, 
+  "value": [
+    "var scimoz =  ko.views.manager.currentView.scimoz;", 
+    "var textIn = scimoz.selText;", 
+    "var textOut = [], len = textIn.length;", 
+    "for(var i = 0, c; (c = textIn.charAt(i)); i++){", 
+    "    var code = c.charCodeAt(0);", 
+    "    textOut[i] = code < 0x20 || code > 0x7e ?", 
+    "        \"\\\\u\" + (code | 0x10000).toString(16).slice(-4) : c;", 
+    "}", 
+    "", 
+    "scimoz.replaceSel(textOut.join(\"\"));"
+  ], 
+  "trigger": "trigger_postopen", 
+  "rank": 100, 
+  "version": "1.0.7", 
+  "async": false, 
+  "type": "macro"
+}
