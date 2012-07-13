@@ -20,7 +20,7 @@ fi
 set -- $ARGS
 
 TODAY=$(date -j +%s)
-APPENDIX="-$(date -j -r $TODAY '+%Y%m%d')"
+APPENDIX="-r$(date -j -r $TODAY '+%Y%m%d')"
 DO_GIT_TAG=
 DO_GIT_PUSH=
 DO_GIT_COMMIT=
