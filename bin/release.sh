@@ -1,5 +1,5 @@
 #!/bin/bash
-ARGS=`getopt cptr:a: $*`
+ARGS=`getopt cfptr:a: $*`
 usage() {
   echo "Usage: $0 [OPTIONS] VERSION DIRECTORY [DIRECTORY ...]"
   echo
@@ -8,6 +8,7 @@ usage() {
   echo "    -t           Creates a git tag using VERSION as label."
   echo "                 Also bumps version number in package.json, if found."
   echo "    -a APPENDIX  Specifies an appendix for the git tag. Defaults to %Y%m%d of today."
+  echo "    -f           Tag a version as final (no appendix, alternative to -a)"
   echo "    -c           Cause a git commit for CHANGELOG."
   echo "    -p           Immediately pushes to origin/master. Implies -c."
   exit 2
@@ -38,6 +39,9 @@ for i; do
         APPENDIX=
       fi
       shift; shift;;
+    -f)
+      APPENDIX=
+      shift;;
     -c)
       DO_GIT_COMMIT=1; shift;;
     -t)
@@ -66,7 +70,6 @@ release () {
     echo "Failure for $1"
     exit 1
   fi
-
   if [ -n "$DO_GIT_TAG" ]; then
     if [ -f package.json ]; then
       npm version "$VERSION$APPENDIX" \
