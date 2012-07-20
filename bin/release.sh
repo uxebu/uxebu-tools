@@ -1,14 +1,14 @@
 #!/bin/bash
-ARGS=`getopt fhptr:a: $*`
+ARGS=`getopt cdhpt $*`
 usage() {
   echo "Usage: $0 [OPTIONS] VERSION DIRECTORY [DIRECTORY ...]"
   echo
   echo "OPTIONS:"
   echo "    -h           Creates a new heading in CHANGELOG for the next release."
+  echo "    -d           Appends the current date to each line that contains only"
+  echo "                 'v<VERSION>'"
   echo "    -t           Creates a git tag using VERSION as label."
   echo "                 Also bumps version number in package.json, if found."
-  echo "    -a APPENDIX  Specifies an appendix for the git tag. Defaults to %Y%m%d of today."
-  echo "    -f           Tag a version as final (no appendix, alternative to -a)"
   echo "    -c           Cause a git commit for CHANGELOG."
   echo "    -p           Immediately pushes to origin/master. Implies -c."
   exit 2
@@ -21,32 +21,24 @@ fi
 set -- $ARGS
 
 TODAY=$(date -j +%s)
-APPENDIX="-r$(date -j -r $TODAY '+%Y%m%d')"
 DO_GIT_TAG=
 DO_GIT_PUSH=
 DO_GIT_COMMIT=
 DO_CHANGELOG_HEADING=
+DO_CHANGELOG_DATE=
 for i; do
   case "$i"
   in
-    -r)
-      DO_CHANGELOG_HEADING=1; shift;;
-    -a)
-      if [ -n $2 ]; then
-        APPENDIX="-$2"
-      else
-        APPENDIX=
-      fi
-      shift; shift;;
-    -f)
-      APPENDIX=
-      shift;;
     -c)
       DO_GIT_COMMIT=1; shift;;
-    -t)
-      DO_GIT_TAG=1; shift;;
+    -d)
+      DO_CHANGELOG_DATE=1; shift;;
+    -h)
+      DO_CHANGELOG_HEADING=1; shift;;
     -p)
       DO_GIT_PUSH=1; DO_GIT_COMMIT=1; shift;;
+    -t)
+      DO_GIT_TAG=1; shift;;
     --)
       shift; break;;
   esac
@@ -69,13 +61,17 @@ release () {
     echo "Failure for $1"
     exit 1
   fi
+  if [ -n "$DO_CHANGELOG_DATE" ]; then
+    TODAY=$(date -j -r $TODAY '+%Y-%m-%d')
+  	sed -i '' "s/^v$VERSION$/v$VERSION \\/ $TODAY/" CHANGELOG
+  fi
   if [ -n "$DO_GIT_TAG" ]; then
     if [ -f package.json ]; then
-      npm version "$VERSION$APPENDIX" \
-        --message "Bump version number to $VERSION$APPENDIX"
+      npm version "$VERSION" \
+        --message "Bump version number to $VERSION"
       git push origin master
     else
-      git tag "v$VERSION$APPENDIX"
+      git tag "v$VERSION"
     fi
 
     git push origin master --tags
