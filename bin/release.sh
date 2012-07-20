@@ -1,5 +1,5 @@
 #!/bin/bash
-ARGS=`getopt cfptr:a: $*`
+ARGS=`getopt fhptr:a: $*`
 usage() {
   echo "Usage: $0 [OPTIONS] VERSION DIRECTORY [DIRECTORY ...]"
   echo
