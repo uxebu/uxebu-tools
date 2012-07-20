@@ -83,8 +83,12 @@ release () {
   fi
 
   if [ -n "$NEXT_RELEASE" ]; then
+  	MAJORMINOR=$(echo $VERSION | cut -f '1 2' -d .)
+  	PATCH_LEVEL=$(echo $VERSION | cut -f 3 -d . | cut -f 1 -d -)
+  	let PATCH_LEVEL=$PATCH_LEVEL+1
+  	NEXT_VERSION="$MAJORMINOR.$PATCH_LEVEL"
     CONTENTS=`cat CHANGELOG`
-    echo "v$VERSION / $NEXT_RELEASE" > CHANGELOG
+    echo "v$NEXT_VERSION / $NEXT_RELEASE" > CHANGELOG
     echo ------------------- >> CHANGELOG
     echo >> CHANGELOG
     echo >> CHANGELOG
