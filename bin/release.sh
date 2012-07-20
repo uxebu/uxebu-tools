@@ -4,7 +4,7 @@ usage() {
   echo "Usage: $0 [OPTIONS] VERSION DIRECTORY [DIRECTORY ...]"
   echo
   echo "OPTIONS:"
-  echo "    -r DAYS      Creates a new heading in CHANGELOG for the next release."
+  echo "    -h           Creates a new heading in CHANGELOG for the next release."
   echo "    -t           Creates a git tag using VERSION as label."
   echo "                 Also bumps version number in package.json, if found."
   echo "    -a APPENDIX  Specifies an appendix for the git tag. Defaults to %Y%m%d of today."
@@ -25,13 +25,12 @@ APPENDIX="-r$(date -j -r $TODAY '+%Y%m%d')"
 DO_GIT_TAG=
 DO_GIT_PUSH=
 DO_GIT_COMMIT=
+DO_CHANGELOG_HEADING=
 for i; do
   case "$i"
   in
     -r)
-      let NEXT_RELEASE=$TODAY+$2*60*60*24
-      NEXT_RELEASE=$(date -j -r $NEXT_RELEASE "+%Y-%m-%d")
-      shift; shift;;
+      DO_CHANGELOG_HEADING=1; shift;;
     -a)
       if [ -n $2 ]; then
         APPENDIX="-$2"
@@ -82,13 +81,13 @@ release () {
     git push origin master --tags
   fi
 
-  if [ -n "$NEXT_RELEASE" ]; then
+  if [ -n "$DO_CHANGELOG_HEADING" ]; then
   	MAJORMINOR=$(echo $VERSION | cut -f '1 2' -d .)
   	PATCH_LEVEL=$(echo $VERSION | cut -f 3 -d . | cut -f 1 -d -)
   	let PATCH_LEVEL=$PATCH_LEVEL+1
   	NEXT_VERSION="$MAJORMINOR.$PATCH_LEVEL"
     CONTENTS=`cat CHANGELOG`
-    echo "v$NEXT_VERSION / $NEXT_RELEASE" > CHANGELOG
+    echo "v$NEXT_VERSION" > CHANGELOG
     echo ------------------- >> CHANGELOG
     echo >> CHANGELOG
     echo >> CHANGELOG
