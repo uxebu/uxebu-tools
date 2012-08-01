@@ -64,6 +64,8 @@ release () {
   if [ -n "$DO_CHANGELOG_DATE" ]; then
     TODAY=$(date -j -r $TODAY '+%Y-%m-%d')
   	sed -i '' "s/^v$VERSION$/v$VERSION \\/ $TODAY/" CHANGELOG
+  	git add CHANGELOG
+  	git commit -m 'Set date for upcoming release in CHANGELOG'
   fi
   if [ -n "$DO_GIT_TAG" ]; then
     if [ -f package.json ]; then
