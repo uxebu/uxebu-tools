@@ -68,6 +68,13 @@ release () {
     git commit -m 'Set date for upcoming release in CHANGELOG'
   fi
   if [ -n "$DO_GIT_TAG" ]; then
+    if [ -f src/version.js ] && $(grep -q "^define" src/version.js); then
+      echo "define(function() {" > src/version.js
+      echo "  return '$VERSION';" >> src/version.js
+      echo "});" >> src/version.js
+      git add src/version.js
+      git commit -m "Bump version number in version.js to $VERSION"
+    fi
     if [ -f package.json ]; then
       npm version "$VERSION" \
         --message "Bump version number to $VERSION"
